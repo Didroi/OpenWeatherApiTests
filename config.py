@@ -26,24 +26,6 @@ def test_read_geo_by_location_name(follow_the_testing_without_object, get_geo):
     assert get_geo.check_status_is_(200)
     logger.info("Test passed!")'''
 
-# Загружаем .env только если он есть (для локальной разработки)
 load_dotenv()
-
-# Получаем переменные из окружения
-# Они будут работать и локально (.env), и в GitHub Actions (secrets)
 API_KEY = os.getenv('API_KEY')
 BASE_URL = os.getenv('BASE_URL')
-
-'''Настройка GitHub Secrets
-Как добавить секреты:
-
-Зайдите в ваш репозиторий на GitHub
-Settings → Secrets and variables → Actions
-Нажмите "New repository secret"
-Добавьте секреты:
-
-Name: API_KEY
-Value: {значение токена}
-
-Name: BASE_URL
-Value: http://api.openweathermap.org'''

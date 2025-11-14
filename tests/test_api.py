@@ -75,7 +75,7 @@ def test_read_geo_by_zip_code(get_geo):
 @allure.story('City name by hardcode Geo location')
 @allure.suite("Geo Location Tests")
 @allure.title('Get name by hardcode Geo location')
-@allure.description('Positive Functional reading of geo location by ZIP code')
+@allure.description('Positive Functional reading name of city by geo')
 @allure.severity(allure.severity_level.BLOCKER)
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -86,15 +86,30 @@ def test_read_name_by_hc_geo(get_geo):
 
 
 @allure.epic('OpenWeather API testing')
-@allure.feature('Geo')
-@allure.story('City name by fixture Geo location')
-@allure.suite("Geo Location Tests")
-@allure.title('Get name by fixture Geo location')
-@allure.description('Positive Functional reading of geo location by ZIP code')
-@allure.severity(allure.severity_level.BLOCKER)
-@pytest.mark.smoke
+@allure.feature('Weather')
+@allure.story('Weather by Geo location')
+@allure.suite("OpenWeather Tests")
+@allure.title('Get Weather by Geo location')
+@allure.description('Positive Functional reading name of city by geo by using location from script')
+@allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.regression
 def test_read_name_by_fixture_geo(get_geo, location_by_zip):
     get_geo.get_location_name_by_geo(*location_by_zip)
     assert get_geo.check_status_is_(200)
     assert get_geo.has_response_valid_schema()
+
+
+@allure.epic('OpenWeather API testing')
+@allure.feature('Geo')
+@allure.story('City name by fixture Geo location')
+@allure.suite("Geo Location Tests")
+@allure.title('Get name by fixture Geo location')
+@allure.description('Positive Functional response weather by geo')
+@allure.severity(allure.severity_level.BLOCKER)
+@pytest.mark.smoke
+@pytest.mark.regression
+def test_get_weather_by_geo_location(get_weather,
+                                     location_by_zip):  # TODO: Использование не захардкоженного города в фикстуре
+    get_weather.get_weather_by_geo_location(*location_by_zip)
+    assert get_weather.check_status_is_(200)
+    assert get_weather.has_response_valid_schema()

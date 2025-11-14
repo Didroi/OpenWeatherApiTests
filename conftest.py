@@ -1,6 +1,7 @@
 import pytest
 
 from endpoints.get_geo import GetGeo
+from endpoints.get_weather import GetWeather
 
 
 @pytest.fixture()
@@ -26,3 +27,8 @@ def follow_the_testing_without_object():
 @pytest.fixture()
 def get_geo():
     return GetGeo()
+
+
+@pytest.fixture()
+def get_weather():
+    return GetWeather()
