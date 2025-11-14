@@ -1,6 +1,7 @@
-import os
-from dotenv import load_dotenv
 import logging
+import os
+
+from dotenv import load_dotenv
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,7 +43,7 @@ Settings → Secrets and variables → Actions
 Добавьте секреты:
 
 Name: API_KEY
-Value: f6d0cc46d8dbe028912abdf9b39bba81
+Value: {значение токена}
 
 Name: BASE_URL
 Value: http://api.openweathermap.org'''
