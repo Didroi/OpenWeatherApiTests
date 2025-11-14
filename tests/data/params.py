@@ -1,0 +1,1 @@
+params = {'appid': self.api_key}

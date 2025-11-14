@@ -1,0 +1,5 @@
+"BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
+"0","OpenWeather API testing","0","Geo","1","0","Geo by ZIP code and country code","0"
+"0","OpenWeather API testing","0","Geo","1","0","Geo by location name","0"
+"0","OpenWeather API testing","0","Geo","1","0","City name by fixture Geo location","0"
+"0","OpenWeather API testing","0","Geo","1","0","City name by hardcode Geo location","0"

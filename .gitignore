@@ -1,0 +1,44 @@
+# Игнорировать файлы кэша и артефакты сборки
+__pycache__
+*.pyc
+*.pyd
+*.pyo
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Игнорировать виртуальные окружения
+.venv
+venv
+env
+
+# Игнорировать файлы IDE и редакторов (опционально, но рекомендуется)
+.idea/        # Для PyCharm/IntelliJ
+.vscode/      # Для VS Code (если не содержит общих настроек)
+*.swp         # Для Vim
+
+# Игнорировать файлы операционных систем
+.DS_Store     # macOS
+Thumbs.db     # Windows
+
+# Игнорировать временные файлы и файлы логов
+*.log
+tmp/
+.coverage
+.tox/
+.env
