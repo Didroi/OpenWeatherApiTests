@@ -6,193 +6,253 @@
 ![Requests](https://img.shields.io/badge/requests-2.32.5-blue)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-API test automation framework for [OpenWeather API](https://openweathermap.org/api) using Python, Pytest, and Allure Report.
+API test automation framework for  [**OpenWeather API**](https://openweathermap.org/api) built with Python, Pytest, and
+Allure.  
+Project demonstrates real-world API testing skills using clean architecture, Allure annotations, fixtures, schema
+validation, and chained endpoint logic.
 
-> 💡 **Note:** After setting up CI/CD, add this badge at the top: `![Tests](https://github.com/Didroi/openweather-api-tests/workflows/API%20Tests/badge.svg)`
+> 💡 **CI/CD badge** can be added later when GitHub Actions pipeline becomes available.
+
+---
 
 ## 📋 About
 
-This project demonstrates automated API testing skills with clean architecture, comprehensive test coverage, and detailed reporting. Built following industry best practices and design patterns.
+This project implements API automation using a clean, scalable structure following the **Endpoint Object Pattern**  
+(API equivalent of Page Object Pattern).  
+Each endpoint is represented by a separate class containing request logic, validation helpers, and Allure steps.
 
-**Architecture:** Uses Endpoint Object Pattern (API equivalent of Page Object Pattern) where each API endpoint is represented as a separate class with methods containing `@allure.step` decorators for detailed test reporting.
+All tests are fully annotated using Allure:
+
+- `@allure.epic`
+- `@allure.feature`
+- `@allure.story`
+- `@allure.suite`
+- `@allure.title`
+- `@allure.description`
+- `@allure.severity`
+
+Fixtures provide data flow between endpoints (e.g., ZIP → GEO → WEATHER).
+
+Schema validation is applied to every endpoint.
+
+---
 
 ## 🛠 Tech Stack
 
-- **Python 3.10+** - Programming language (tested on Python 3.12)
-- **Pytest** - Testing framework
-- **Requests** - HTTP library
-- **Allure Report** - Test reporting
-- **python-dotenv** - Environment management
+- **Python 3.10+**
+- **Pytest 9**
+- **Requests**
+- **Allure Report**
+- **python-dotenv** — environment variables
+- **JSON Schema** — response structure validation
+
+---
 
 ## 📂 Project Structure
 
 ```
 OpenWeather/
-├── endpoints/              # API endpoint classes (Endpoint Object Pattern)
-│   ├── base_api.py        # Base API class with common methods
-│   ├── get_geo.py         # Geo API endpoints (with @allure.step)
-│   └── ...                # Other API endpoints
-├── tests/                 # Test suite
-│   ├── data/              # Test data (payloads, schemas)
+├── endpoints/
+│   ├── base_api.py               # Common API logic
+│   ├── get_geo.py                # Direct, ZIP-based, and reverse geocoding endpoints
+│   ├── get_weather.py            # Current weather endpoint
+│   └── ...
+│
+├── tests/
+│   ├── data/
+│   │   ├── schemas/              # JSON Schemas for API validation
 │   │   ├── headers.py
 │   │   ├── params.py
 │   │   └── payloads.py
-│   ├── test_api.py        # API tests
-│   └── conftest.py        # Pytest fixtures
-├── allure-results/        # Allure test results
-├── config.py              # Configuration
-├── .env                   # Environment variables (not in repo)
+│   ├── conftest.py               # Fixtures (API clients, ZIP lookup fixture, env setup)
+│   ├── test_api.py               # Main API test suite (with full Allure annotations)
+│   └── ...
+│
+├── config.py                     # Base URL, env config
+├── .env                          # API key & config (ignored by Git)
 ├── .gitignore
-└── requirements.txt       # Dependencies
+├── requirements.txt
+└── allure-results/
 ```
+
+---
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### 1. Clone repository
 
-- Python 3.10 or higher
-- OpenWeather API key ([Get free key](https://home.openweathermap.org/api_keys))
-
-### Installation
-
-1. Clone the repository
 ```bash
 git clone https://github.com/Didroi/openweather-api-tests.git
 cd openweather-api-tests
 ```
 
-2. Install dependencies
+### 2. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Configure environment variables
+### 3. Configure environment
 
-Create `.env` file in project root:
+Create `.env`:
+
 ```env
 API_KEY=your_openweather_api_key
 BASE_URL=https://api.openweathermap.org
 ```
 
-### Running Tests
+---
 
-Execute all tests:
+## ▶ Running Tests
+
+Run all tests:
+
 ```bash
 pytest tests/
 ```
 
-Run with Allure results:
+With Allure:
+
 ```bash
 pytest tests/ --alluredir=allure-results
 ```
 
-Run specific test markers:
-```bash
-pytest tests/ -m smoke
-pytest tests/ -m regression
-```
-
-### Generate Allure Report
+Open report:
 
 ```bash
 allure serve allure-results
 ```
 
+Run specific markers:
+
+```bash
+pytest -m smoke
+pytest -m regression
+```
+
+---
+
 ## 🧪 Test Coverage
 
-### Implemented Endpoints
+### ✔ Implemented Endpoints
 
-| Endpoint | Method | Status |
-|----------|--------|--------|
-| `/geo/1.0/direct` | GET | ✅ Completed |
-| More endpoints | - | 🚧 In Progress |
+| Endpoint            | Method | Status                   |
+|---------------------|--------|--------------------------|
+| `/geo/1.0/direct`   | GET    | ✅ Direct geocoding       |
+| `/geo/1.0/zip`      | GET    | ✅ ZIP → GEO              |
+| `/geo/1.0/reverse`  | GET    | ✅ Reverse geocoding      |
+| `/data/2.5/weather` | GET    | ✅ Weather by coordinates |
 
-### Test Scenarios
+---
 
-**Positive Tests:**
-- ✅ Get geo location by city name
-- ✅ Verify response structure
-- ✅ Validate status codes
+## ✔ Test Scenarios
 
-**Negative Tests:**
-- 🚧 Invalid city name
-- 🚧 Missing API key
-- 🚧 Empty parameters
+### **Positive tests**
 
-**Parametrized Tests:**
-- 🚧 Multiple cities
-- 🚧 Boundary values
+- Get coordinates by city name
+- Get coordinates by ZIP code
+- Reverse geocoding (hardcoded coords)
+- Reverse geocoding (coords from ZIP)
+- Weather by coordinates (from ZIP lookup)
+- Cross-endpoint chain: **ZIP → GEO → WEATHER**
+- Response schema validation
+- Status code validation
 
-## 📊 Test Example
+### **Negative tests (planned)**
 
-> **Note:** Allure steps (`@allure.step`) are implemented inside endpoint methods (e.g., `get_geo.py`), keeping test code clean and focused.
+- Invalid city name
+- Empty parameters
+- Missing API key
+- Invalid ZIP
+- Boundary values
 
-**Test code:**
+### **Parametrization**
+
+🚧 Planned (lists of cities, ZIP codes, etc.)
+
+---
+
+## 📊 Test Example (REAL **current** structure)
+
+Below is an example exactly matching the style of your current test suite.
+
 ```python
-@allure.epic('OpenWeather API testing')
-@allure.feature('Geo')
-@allure.story('Geo by location name')
-@allure.title('Get GEO by location name')
-@allure.severity(allure.severity_level.BLOCKER)
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Geocoding")
+@allure.story("Direct geocoding by city name")
+@allure.suite("Geocoding Tests")
+@allure.title("Get coordinates by city name")
+@allure.description(
+    "Validate that direct geocoding API returns correct schema and successful "
+    "response when searching coordinates by city name."
+)
+@allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.smoke
-def test_read_geo_by_location_name(follow_the_testing_without_object, get_geo):
-    get_geo.get_geo_by_location_name("Prague")
-    
+@pytest.mark.regression
+def test_get_geo_by_city_name(get_geo):
+    get_geo.get_geo_by_city_name("Praha")
     assert get_geo.check_status_is_(200)
-    assert get_geo.response_json is not None
+    assert get_geo.has_response_valid_schema()
 ```
 
-**Endpoint method with Allure steps:**
+---
+
+## 📡 Example Endpoint (with Allure steps)
+
 ```python
 class GetGeo(BaseApi):
-    GEO_URI = '/geo/1.0/direct'
-    
-    @allure.step('Get GEO by location name')
-    def get_geo_by_location_name(self, geo_name, limit=5):
-        params = {
-            'q': geo_name,
-            'limit': limit,
-            'appid': self.api_key
-        }
-        self.response = requests.get(
-            url=f'{self.base_url}{self.GEO_URI}',
-            params=params
-        )
-        self.response_json = self.response.json()
-        self.response_code = self.response.status_code
+
+    @allure.step("Get GEO by city name: {city_name}")
+    def get_geo_by_city_name(self, city_name, limit=5):
+        params = {"q": city_name, "limit": limit, "appid": self.api_key}
+        self._send_request("/geo/1.0/direct", params)
+        return self
 ```
+
+---
 
 ## 🎯 Features
 
-- ✅ Endpoint Object Pattern (API equivalent of Page Object)
-- ✅ Pytest fixtures for test setup
-- ✅ Allure reporting with detailed steps
-- ✅ Environment configuration management
-- ✅ Test data separation
-- 🚧 JSON schema validation
-- 🚧 Parametrized tests
-- 🚧 CI/CD pipeline (GitHub Actions)
-- 🚧 Logging
+- ✔ Endpoint Object Pattern
+- ✔ Allure step annotations
+- ✔ Full Allure suite/feature/story metadata
+- ✔ JSON Schema validation
+- ✔ Fixtures for data flow
+- ✔ Chained tests (ZIP → GEO → WEATHER)
+- ✔ Clean test code (request logic moved to endpoint classes)
+
+### 🚧 In progress
+
+- Parametrized test matrix
+- Negative scenarios
+- CI/CD (GitHub Actions)
+- Logging system
+
+---
 
 ## 📝 Roadmap
 
-- [ ] Add more endpoint coverage
-- [ ] Implement negative test scenarios
-- [ ] Add JSON schema validation
-- [ ] Set up CI/CD with GitHub Actions
-- [ ] Add logging functionality
-- [ ] Increase parametrization
+- [ ] Add negative tests
+- [ ] Add broad parametrization
+- [ ] Add GitHub Actions CI pipeline
+- [ ] Add debug/info logging
+- [ ] Add more endpoints (forecast, air pollution, etc.)
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License
+
+---
 
 ## 👤 Author
 
 **Dmitrii Kiselev**
+
 - GitHub: [@Didroi](https://github.com/Didroi)
 - LinkedIn: [dmitrii-kiselev](https://linkedin.com/in/dmitrii-kiselev)
 
 ---
 
-⭐ Star this repository if you find it helpful!
+⭐ *If this project helped you — leave a star!*
