@@ -40,76 +40,106 @@ allure.attach() - прикрепление данных (request/response)
 '''
 
 
-@allure.epic('OpenWeather API testing')
-@allure.feature('Geo')
-@allure.story('Geo by location name')
-@allure.suite("Geo Location Tests")
-@allure.title('Get Geo by location name')
-@allure.description('Positive Functional reading of geo location by name')
-@allure.severity(allure.severity_level.BLOCKER)
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Geocoding")
+@allure.story("Direct geocoding by city name")
+@allure.suite("Geocoding Tests")
+@allure.title("Get coordinates by city name")
+@allure.description(
+    "Validate that direct geocoding API returns correct schema and successful "
+    "response when searching coordinates by city name."
+)
+@allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.smoke
 @pytest.mark.regression
-def test_read_geo_by_location_name(get_geo):
-    get_geo.get_geo_by_location_name("Praha")
+def test_get_geo_by_city_name(get_geo):
+    get_geo.get_geo_by_city_name("Praha")
     assert get_geo.check_status_is_(200)
     assert get_geo.has_response_valid_schema()
 
 
-@allure.epic('OpenWeather API testing')
-@allure.feature('Geo')
-@allure.story('Geo by ZIP code and country code')
-@allure.suite("Geo Location Tests")
-@allure.title('Get Geo by location name')
-@allure.description('Positive Functional reading of geo location by ZIP code')
-@allure.severity(allure.severity_level.BLOCKER)
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Geocoding")
+@allure.story("Direct geocoding by ZIP code")
+@allure.suite("Geocoding Tests")
+@allure.title("Get coordinates by ZIP code")
+@allure.description(
+    "Ensure that ZIP code + country code based geocoding returns valid schema "
+    "and a successful HTTP response."
+)
+@allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.smoke
 @pytest.mark.regression
-def test_read_geo_by_zip_code(get_geo):
-    get_geo.get_geo_by_zip_code("454000", "RU")
+def test_get_geo_by_zip_code(get_geo):
+    get_geo.get_geo_by_zip("454000", "RU")
     assert get_geo.check_status_is_(200)
     assert get_geo.has_response_valid_schema()
 
 
-@allure.epic('OpenWeather API testing')
-@allure.feature('Geo')
-@allure.story('City name by hardcode Geo location')
-@allure.suite("Geo Location Tests")
-@allure.title('Get name by hardcode Geo location')
-@allure.description('Positive Functional reading name of city by geo')
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Geocoding")
+@allure.story("Reverse geocoding with fixed coordinates")
+@allure.suite("Geocoding Tests")
+@allure.title("Get city name by hardcoded coordinates")
+@allure.description(
+    "Check that reverse geocoding returns a valid location name when using predefined latitude "
+    "and longitude values."
+)
 @allure.severity(allure.severity_level.BLOCKER)
 @pytest.mark.smoke
 @pytest.mark.regression
-def test_read_name_by_hc_geo(get_geo):
-    get_geo.get_location_name_by_geo(50.0874654, 14.4212535)
+def test_reverse_geo_lookup_hardcoded(get_geo):
+    get_geo.reverse_geocoding_by_coordinates(50.0874654, 14.4212535)
     assert get_geo.check_status_is_(200)
     assert get_geo.has_response_valid_schema()
 
 
-@allure.epic('OpenWeather API testing')
-@allure.feature('Weather')
-@allure.story('Weather by Geo location')
-@allure.suite("OpenWeather Tests")
-@allure.title('Get Weather by Geo location')
-@allure.description('Positive Functional reading name of city by geo by using location from script')
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Geocoding")
+@allure.story("Reverse geocoding using coordinates from fixture")
+@allure.suite("Geocoding Tests")
+@allure.title("Get city name by coordinates from ZIP fixture")
+@allure.description(
+    "Validate reverse geocoding when coordinates are obtained from another test fixture "
+    "via ZIP lookup. Ensures data flow between two endpoints works correctly."
+)
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.regression
-def test_read_name_by_fixture_geo(get_geo, location_by_zip):
-    get_geo.get_location_name_by_geo(*location_by_zip)
+def test_reverse_geo_lookup_from_fixture(get_geo, location_by_zip):
+    get_geo.reverse_geocoding_by_coordinates(*location_by_zip)
     assert get_geo.check_status_is_(200)
     assert get_geo.has_response_valid_schema()
 
 
-@allure.epic('OpenWeather API testing')
-@allure.feature('Geo')
-@allure.story('City name by fixture Geo location')
-@allure.suite("Geo Location Tests")
-@allure.title('Get name by fixture Geo location')
-@allure.description('Positive Functional response weather by geo')
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Weather")
+@allure.story("Fetch weather data by coordinates")
+@allure.suite("Weather Tests")
+@allure.title("Get weather by coordinates from fixture")
+@allure.description(
+    "Validate that the Weather API correctly returns current weather data for coordinates "
+    "obtained from ZIP-based geocoding."
+)
 @allure.severity(allure.severity_level.BLOCKER)
 @pytest.mark.smoke
 @pytest.mark.regression
-def test_get_weather_by_geo_location(get_weather,
-                                     location_by_zip):  # TODO: Использование не захардкоженного города в фикстуре
-    get_weather.get_weather_by_geo_location(*location_by_zip)
+def test_get_weather_by_coordinates_fixture(get_weather,
+                                            location_by_zip):  # TODO: Использование не захардкоженного города в фикстуре
+    get_weather.get_weather_by_coordinates(*location_by_zip)
+    assert get_weather.check_status_is_(200)
+    assert get_weather.has_response_valid_schema()
+
+
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Weather")
+@allure.story("Fetch weather data by city name")
+@allure.suite("Weather Tests")
+@allure.title("Get weather by city name")
+@allure.description("Validate that the Weather API correctly returns current weather data for city name")
+@allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.smoke
+@pytest.mark.regression
+def test_get_weather_by_city_name(get_weather):
+    get_weather.get_weather_by_city_name("Paris")
     assert get_weather.check_status_is_(200)
     assert get_weather.has_response_valid_schema()
