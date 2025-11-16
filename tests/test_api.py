@@ -136,10 +136,48 @@ def test_get_weather_by_coordinates_fixture(get_weather,
 @allure.suite("Weather Tests")
 @allure.title("Get weather by city name")
 @allure.description("Validate that the Weather API correctly returns current weather data for city name")
-@allure.severity(allure.severity_level.CRITICAL)
+@allure.severity(allure.severity_level.BLOCKER)
 @pytest.mark.smoke
 @pytest.mark.regression
 def test_get_weather_by_city_name(get_weather):
     get_weather.get_weather_by_city_name("Paris")
     assert get_weather.check_status_is_(200)
     assert get_weather.has_response_valid_schema()
+
+
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Weather")
+@allure.story("Validate different measurement units")
+@allure.suite("Weather Tests")
+@allure.title("Get weather for different measurement units")
+@allure.description(
+    "Validate that the Weather API correctly returns current weather data for city in different measurement units")
+@allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.regression
+@pytest.mark.parametrize("units,temp_min,temp_max", [
+    ("metric", -50, 50),
+    ("imperial", -58, 122),
+    ("standard", 223, 323),
+])
+def test_get_weather_with_different_units(get_weather, units, temp_min, temp_max):
+    get_weather.get_weather_by_city_name('Prague', units=units)
+    assert get_weather.check_status_is_(200)
+    assert get_weather.has_response_valid_schema()
+    assert get_weather.is_temperatura_in_correct_range(temp_min, temp_max)
+
+
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Weather")
+@allure.story("Validate different response type")
+@allure.suite("Weather Tests")
+@allure.title("Get weather for different modes of response type")
+@allure.description(
+    "Validate that the Weather API correctly returns current weather data for city in different response type")
+@allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.regression
+@pytest.mark.parametrize("mode", ["json", "xml", "html"])
+def test_get_weather_api_response_in_different_modes(get_weather, mode):
+    get_weather.get_weather_by_city_name('Prague', mode=mode)
+    assert get_weather.check_status_is_(200)
+    assert get_weather.is_response_in_headers_has_content_type(mode)
+    assert get_weather.is_body_response_format(mode)

@@ -9,6 +9,7 @@ class BaseApi:
     response_json: dict
     response_code: int
     current_schema = None
+    content_type: str
 
     def __init__(self):
         self.api_key: str = API_KEY
@@ -29,3 +30,7 @@ class BaseApi:
 
         validated = self.current_schema(**response_data)
         return True
+
+    @allure.step("Validate response in correct content type")
+    def is_response_in_headers_has_content_type(self, content_type):
+        return content_type in self.content_type
