@@ -1,6 +1,8 @@
 import allure
 import pytest
 
+from tests.data.test_params import LANGUAGE_CITY_NAMES
+
 '''import allure
 import pytest
 from allure_commons.types import Severity
@@ -181,3 +183,20 @@ def test_get_weather_api_response_in_different_modes(get_weather, mode):
     assert get_weather.check_status_is_(200)
     assert get_weather.is_response_in_headers_has_content_type(mode)
     assert get_weather.is_body_response_format(mode)
+
+
+@allure.epic("OpenWeather API Testing")
+@allure.feature("Weather")
+@allure.story("Validate response in different language")
+@allure.suite("Weather Tests")
+@allure.title("Get weather for different measurement units")
+@allure.description(
+    "Validate that the Weather API correctly returns response in different language")
+@allure.severity(allure.severity_level.NORMAL)
+@pytest.mark.regression
+@pytest.mark.parametrize("language, city_name", LANGUAGE_CITY_NAMES)
+def test_get_weather_with_different_units(get_weather, language, city_name):
+    get_weather.get_weather_by_city_name('Prague', lang=language)
+    assert get_weather.check_status_is_(200)
+    assert get_weather.has_response_valid_schema()
+    assert get_weather.has_city_correct_name(city_name)

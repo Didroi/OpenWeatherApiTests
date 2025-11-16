@@ -29,7 +29,7 @@ class GetWeather(BaseApi):
         self.current_schema = CurrentWeatherSchema
 
     @allure.step("Send GET /data/2.5/weather with city name: {city_name}")
-    def get_weather_by_city_name(self, city_name, units=None, mode=None):
+    def get_weather_by_city_name(self, city_name, units=None, mode=None, lang=None):
         params = {
             'q': city_name,
             'appid': self.api_key
@@ -38,6 +38,8 @@ class GetWeather(BaseApi):
             params['units'] = units
         if mode:
             params['mode'] = mode
+        if lang:
+            params['lang'] = lang
 
         self.response = requests.get(
             f'{self.base_url}{self.WEATHER_URI}',
@@ -78,3 +80,7 @@ class GetWeather(BaseApi):
                 f"Unsupported format: '{expected_format}'. "
                 f"Expected one of: 'json', 'xml', 'html'"
             )
+
+    @allure.step("Check is the city name {city_name} correct in different languages")
+    def has_city_correct_name(self, city_name):
+        return self.response_json['name'] == city_name
